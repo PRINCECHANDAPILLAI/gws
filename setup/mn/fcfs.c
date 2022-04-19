@@ -1,41 +1,70 @@
 #include<stdio.h>
-struct Process{
-    int ID;
-    int burstTime;
-    int waitingTime;
-    int turnAroundTime;
-};
-void calculate(struct Process process[],int numberOfProcess){
-    for(int i=0;i<numberOfProcess;i++){
-        if(i>0){
-            process[i].waitingTime=process[i-1].burstTime+process[i-1].waitingTime;
-        }else{
-            process[i].waitingTime=0;
+void main()
+{
+    int  n,i,at[10],bt[10],p[10],wt[10],ct[10],tat[10],temp;
+    float avg_wt,avg_tat;
+    printf("Enter the number of processes\n");
+    scanf("%d",&n);
+    printf("Enter the Arrival time for each process\n");
+    for( i=0;i<n;i++)
+      {
+          printf("PROCESS %d\t",i+1);
+          scanf("%d",&at[i]);
+          p[i]=i+1;
+
+      }
+     printf("Enter the Burst time for each process\n"); 
+    for(i=0;i<n;i++)
+      {
+          printf("PROCESS %d\t",i+1);
+          scanf("%d",&bt[i]);
+      }
+    for(i=0;i<n;i++)
+    {
+        for(int j=i+1;j<n;j++)
+        {
+            if(at[j]<at[i])
+            {
+                temp=at[i];
+                at[i]=at[j];
+                at[j]=temp;
+                 temp=p[i];
+                p[i]=p[j];
+                p[j]=temp;
+                temp=bt[i];
+                bt[i]=bt[j];
+                bt[j]=temp;
+            }
         }
-        process[i].turnAroundTime=process[i].waitingTime+process[i].burstTime;
     }
-}
-void show(struct Process process[],int numberOfProcess){
-    float avgWaitingTime=0,avgTurnAroundTime=0;
-    printf("Process ID\tBurst Time\tWaiting Time\tTurn Around Time\n");
-     for(int i=0;i<numberOfProcess;i++){
-        printf("%d\t\t%d\t\t%d\t\t%d\n",process[i].ID,process[i].burstTime,process[i].waitingTime,process[i].turnAroundTime);
-        avgTurnAroundTime+=process[i].turnAroundTime;
-        avgWaitingTime+=process[i].waitingTime;
-     }
-     printf("Avarage Turn Around Time : %f\n",avgTurnAroundTime/(float)numberOfProcess);
-     printf("Avarage Waiting Time : %f\n",avgWaitingTime/(float)numberOfProcess);
-}
-void main(){
-   int numberOfProcess;
-   printf("Enter Number Of Process : ") ;
-   scanf("%d",&numberOfProcess);
-   struct Process process[numberOfProcess];
-   for(int i=0;i<numberOfProcess;i++){
-       process[i].ID=i+1;
-       printf("Enter Burst Time of %d th Process: ",i+1);
-       scanf("%d",&process[i].burstTime);
-   } 
-   calculate(process,numberOfProcess);
-   show(process,numberOfProcess);
+      wt[0]=0;
+      ct[0]=at[0];
+      avg_wt=0;
+      avg_tat=0;
+       for(i=1;i<n;i++)
+       {
+           ct[i]=ct[i-1]+bt[i-1];
+           wt[i]=(ct[i]-at[i]);
+           avg_wt+=wt[i];
+              if(wt[i]<0)
+              {
+                  wt[i]=0;
+              }
+       }
+       for ( i = 0; i < n ; i++){
+
+        tat[i] = bt[i] + wt[i];
+        avg_tat+=tat[i];
+
+       }
+    printf("FCFS SCHEDULING\n");
+    printf("PROCESS ID   ARRIVAL TIME \t  BURST TIME\t  WAITING TIME\t TURN AROUND TIME\n");
+      for(i=0;i<n;i++)
+    {
+        printf("%d\t\t     %d\t\t      %d\t\t    %d\t\t  %d\n",p[i],at[i],bt[i],wt[i],tat[i]);
+    }
+    avg_wt= (float) avg_wt/n;
+    avg_tat= (float) avg_tat/n;
+    printf("The average waiting time is %f\n",avg_wt);
+    printf("The average Turn around_time is %f",avg_tat);
 }
